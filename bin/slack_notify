@@ -3,11 +3,16 @@ SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE); pwd)
 
 source ${SCRIPT_DIR}/../etc/slack_notify.conf
 read LOG
-
-curl -s -XPOST \
-  --data-urlencode "text=${LOG}" \
-  --data-urlencode "channel=${CHANNEL}" \
-  --data-urlencode "username=${USERNAME}" \
-  --data-urlencode "icon_emoji=${ICON_EMOJI}" \
-  --data-urlencode "token=${SLACK_API_TOKEN}" \
-  https://slack.com/api/chat.postMessage
+if [ "${WEBHOOK_URL}" -eq "" ]; then
+  curl -s -XPOST \
+    --data-urlencode "text=${LOG}" \
+    --data-urlencode "channel=${CHANNEL}" \
+    --data-urlencode "username=${USERNAME}" \
+    --data-urlencode "icon_emoji=${ICON_EMOJI}" \
+    --data-urlencode "token=${SLACK_API_TOKEN}" \
+    https://slack.com/api/chat.postMessage
+else
+  curl -XPOST -H 'Content-Type: application/json' \
+    --data "{\"text\":\"${LOG}\",\"username\":\"${USERNAME}\",\"icon_emoji\":\"${ICON_EMOJI}\",\"channel\":\"${CHANNEL}\"}" \
+    ${WEBHOOK_URL}
+fi
