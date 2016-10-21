@@ -3,7 +3,7 @@ SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE); pwd)
 
 source ${SCRIPT_DIR}/../etc/slack_notify.conf
 read LOG
-if [ "${WEBHOOK_URL}" -eq "" ]; then
+if [ "${WEBHOOK_URL}" == "" ]; then
   curl -s -XPOST \
     --data-urlencode "text=${LOG}" \
     --data-urlencode "channel=${CHANNEL}" \
